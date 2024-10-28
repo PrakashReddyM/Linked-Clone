@@ -1,1 +1,1 @@
-export const BaseUrl = 'https://linked-clone-1.onrender.com'
+export const BaseUrl = 'https://linked-clone-1.onrender.com/api/v1'
