@@ -14,7 +14,7 @@ export const SocketContextProvider = ({ children }) => {
 
     useEffect(() => {
         if (authUser) {
-            const socketInstance = io("https://linked-clone-1.onrender.com", {
+            const socketInstance = io("https://linked-clone-2.onrender.com", {
                 query: {
                     userId: authUser._id,
                 },
