@@ -1,6 +1,7 @@
 import User from '../models/userModel.js';
+import cloudinary from 'cloudinary';
 
-// Edit Banner
+
 export const editBanner = async (req, res, next) => {
     try {
         const userId = req.user._id;
@@ -8,13 +9,19 @@ export const editBanner = async (req, res, next) => {
             return res.status(404).json({ success: false, message: 'Please upload an image' });
         }
 
-        const postImage = req.file.path.replace(/\\/g, '/');
-        const imageUrl = `${req.protocol}://${req.get('host')}/${postImage}`;
+        const result = await cloudinary.v2.uploader.upload(req.file.path, {
+            folder: "uploads",
+            resource_type: "image"
+        });
 
-        const user = await User.findByIdAndUpdate(userId, { bannerImg: imageUrl }, { new: true, runValidators: true });
+        const user = await User.findByIdAndUpdate(
+            userId, 
+            { bannerImg: result.secure_url }, 
+            { new: true, runValidators: true }
+        );
 
         if (!user) return res.status(404).json({ success: false, message: 'User not found' });
-        await user.save()
+        await user.save();
 
         res.status(200).json({
             success: true,
@@ -27,7 +34,6 @@ export const editBanner = async (req, res, next) => {
     }
 };
 
-//edit prof and info
 export const editProfile = async (req, res, next) => {
     try {
         const userId = req.user._id;
@@ -36,15 +42,17 @@ export const editProfile = async (req, res, next) => {
             return res.status(404).json({ success: false, message: 'Please upload an image' });
         }
 
-        const postImage = req.file.path.replace(/\\/g, '/');
-        const imageUrl = `${req.protocol}://${req.get('host')}/${postImage}`;
+        const result = await cloudinary.v2.uploader.upload(req.file.path, {
+            folder: "uploads",
+            resource_type: "image"
+        });
 
-        const updateData = imageUrl ? { profilePic: imageUrl, ...req.body } : { ...req.body };
+        const updateData = result.secure_url ? { profilePic: result.secure_url, ...req.body } : { ...req.body };
 
         const user = await User.findByIdAndUpdate(userId, updateData, { new: true, runValidators: true });
 
         if (!user) return res.status(404).json({ success: false, message: 'User not found' });
-        await user.save()
+        await user.save();
 
         res.status(200).json({
             success: true,
@@ -54,31 +62,28 @@ export const editProfile = async (req, res, next) => {
         console.error('Error in editProfile Controller:', error.message);
         res.status(500).json({ success: false, error: error.message });
     }
-}
+};
 
-//getUsers
 export const getUsers = async (req, res) => {
     try {
-        const users = await User.find()
-        const filteredUsers = users.filter((item) => item._id.toString() !== req.user._id.toString())
-        res.status(200).json(filteredUsers)
+        const users = await User.find();
+        const filteredUsers = users.filter((item) => item._id.toString() !== req.user._id.toString());
+        res.status(200).json(filteredUsers);
     } catch (error) {
-        console.log('Error in getUsers controller:', error.message)
-        res.status(500).json({ message: 'Intenal Server Error' })
-
+        console.log('Error in getUsers controller:', error.message);
+        res.status(500).json({ message: 'Internal Server Error' });
     }
-}
+};
 
-//getProfileById
 export const getProfileById = async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
         if (!user) {
-            return res.status(400).json({ message: 'User Not Found' })
+            return res.status(400).json({ message: 'User Not Found' });
         }
-        res.status(200).json(user)
+        res.status(200).json(user);
     } catch (error) {
-        console.log('Error in getProfileById', error.message)
-        res.status(500).json({ message: 'Internal Server Error' })
+        console.log('Error in getProfileById', error.message);
+        res.status(500).json({ message: 'Internal Server Error' });
     }
-}
+};

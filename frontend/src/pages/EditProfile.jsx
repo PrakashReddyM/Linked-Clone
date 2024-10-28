@@ -39,8 +39,6 @@ const EditProfile = () => {
                 },
                 withCredentials: true,
             });
-            console.log(data)
-            console.log('Profile updated successfully:', data);
             navigate('/profile')
         } catch (error) {
             console.error('Error updating profile:', error);

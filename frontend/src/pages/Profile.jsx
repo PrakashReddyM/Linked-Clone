@@ -4,18 +4,20 @@ import { BaseUrl } from '../utils/api';
 import { MdEdit } from "react-icons/md";
 import { Link } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
+import defaultProfile from '../assets/Profile.png';
+import defaultBanner from '../assets/defaultBanner.jpg';
 
 const Profile = () => {
     const [pData, setPData] = useState({});
-    const { setAuthUser } = useAuthContext()
+    const { setAuthUser } = useAuthContext();
 
     useEffect(() => {
         const getProfile = async () => {
             try {
                 const { data } = await axios.get(`${BaseUrl}/auth/profile`, { withCredentials: true });
                 setPData(data);
-                localStorage.setItem('user', JSON.stringify(data))
-                setAuthUser(data)
+                localStorage.setItem('user', JSON.stringify(data));
+                setAuthUser(data);
             } catch (error) {
                 console.log(error);
             }
@@ -24,16 +26,16 @@ const Profile = () => {
     }, []);
 
     return (
-        <div className='bg-gray-100 w-full h-screen flex '>
+        <div className='bg-gray-100 w-full h-screen flex'>
             <main className='bg-white w-2/3 h-[500px] rounded-lg shadow-md ml-6 mt-6'>
                 <div className='relative'>
                     <img
-                        src={pData.bannerImg}
+                        src={pData.bannerImg || defaultBanner}
                         alt="banner"
                         className='w-full h-40 object-cover rounded-t-lg'
                     />
                     <img
-                        src={pData.profilePic}
+                        src={pData.profilePic || defaultProfile}
                         alt="profile"
                         className='absolute w-40 h-40 rounded-full border-4 border-white top-20 left-6'
                     />
@@ -51,15 +53,9 @@ const Profile = () => {
                         </button>
                     </Link>
                     <h2 className='text-xl text-gray-800 font-bold'>{pData.name}</h2>
-                    <p className='text-gray-700 text-sm mt-3 '>{pData.headline}</p>
+                    <p className='text-gray-700 text-sm mt-3'>{pData.headline}</p>
                     <p className='text-gray-700 text-sm mt-2'>{pData.location}</p>
                     <p className='text-gray-800 text-sm'>{pData.email}</p>
-
-                    {/* <div className='flex space-x-6 mt-4'>
-                        <p className='text-gray-700 text-sm font-bold'>120 followers</p>
-                        <p className='text-gray-700 text-sm font-bold'>124 following</p>
-                    </div> */}
-
                     <h4 className='mt-4 text-green-600 font-semibold'>Open To Work</h4>
                 </div>
             </main>

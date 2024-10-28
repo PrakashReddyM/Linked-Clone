@@ -1,4 +1,5 @@
 import Post from "../models/postModel.js"
+import cloudinary from "../middleware/cloudinary.js";
 
 
 //create Post
@@ -13,14 +14,16 @@ export const createPost = async (req, res, next) => {
             return res.status(404).json({ success: false, message: "Please Upload an image" })
         }
 
-        const postImage = req.file.path.replace(/\\/g, "/");
-        const imageUrl = `${req.protocol}://${req.get('host')}/${postImage}`;
+        const result = await cloudinary.uploader.upload(req.file.path, {
+            folder: "uploads", 
+            resource_type: "image"
+        });
 
         const post = new Post({
-            author:userId,
+            author: userId,
             content,
-            image: imageUrl
-        })
+            image: result.secure_url,
+        });
         await post.save()
 
         res.status(201).json(post)
