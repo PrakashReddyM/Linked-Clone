@@ -12,7 +12,7 @@ import { useAuthContext } from '../context/AuthContext';
 
 const Header = () => {
     const navigate = useNavigate()
-    const {setAuthUser} = useAuthContext()
+    const { setAuthUser } = useAuthContext()
     const handleLogout = () => {
         localStorage.removeItem('user')
         setAuthUser(null)
